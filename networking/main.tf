@@ -86,20 +86,19 @@ resource "aws_default_route_table" "tf-aws_private_rt" {
 }
 
 resource "aws_security_group" "tf-aws_sg" {
-  name        = "public_sg"
-  description = "Security group for public access."
+  for_each    = var.security_groups
+  name        = each.value.name
+  description = each.value.description
   vpc_id      = aws_vpc.tf-aws_vpc.id
-  ingress = [{
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = [var.access_ip]
-    description      = "Security group ingress."
-    ipv6_cidr_blocks = []
-    prefix_list_ids  = []
-    security_groups  = []
-    self             = false
-  }]
+  dynamic "ingress" {
+    for_each = each.value.ingress
+    content {
+      from_port   = ingress.value.from
+      to_port     = ingress.value.to
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_blocks
+    }
+  }
   egress = [{
     from_port        = 0
     to_port          = 0
