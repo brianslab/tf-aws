@@ -20,6 +20,9 @@ resource "aws_vpc" "tf-aws_vpc" {
   tags = {
     Name = "tf-aws_vpc-${random_integer.random.id}"
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_subnet" "tf-aws_public_subnet" {
@@ -80,4 +83,32 @@ resource "aws_default_route_table" "tf-aws_private_rt" {
   tags = {
     "Name" = "tf-aws_private"
   }
+}
+
+resource "aws_security_group" "tf-aws_sg" {
+  name        = "public_sg"
+  description = "Security group for public access."
+  vpc_id      = aws_vpc.tf-aws_vpc.id
+  ingress = [{
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = [var.access_ip]
+    description      = "Security group ingress."
+    ipv6_cidr_blocks = []
+    prefix_list_ids  = []
+    security_groups  = []
+    self             = false
+  }]
+  egress = [{
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    description      = "Security group egress."
+    ipv6_cidr_blocks = []
+    prefix_list_ids  = []
+    security_groups  = []
+    self             = false
+  }]
 }
