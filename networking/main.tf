@@ -111,3 +111,13 @@ resource "aws_security_group" "tf-aws_sg" {
     self             = false
   }]
 }
+
+resource "aws_db_subnet_group" "tf-aws_subnetgroup" {
+  count      = var.db_subnet_group ? 1 : 0
+  name       = "tf-aws_subnetgroup"
+  subnet_ids = aws_subnet.tf-aws_private_subnet.*.id
+
+  tags = {
+    "Name" = "tf-aws_rds_sng"
+  }
+}
