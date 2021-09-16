@@ -45,3 +45,39 @@ resource "aws_subnet" "tf-aws_private_subnet" {
     Name = "tf-aws_private_${count.index + 1}"
   }
 }
+
+resource "aws_route_table_association" "tf-aws_public_assoc" {
+  count          = var.public_sn_count
+  subnet_id      = aws_subnet.tf-aws_public_subnet.*.id[count.index]
+  route_table_id = aws_route_table.tf-aws_public_rt.id
+}
+
+resource "aws_internet_gateway" "tf-aws_internet_gateway" {
+  vpc_id = aws_vpc.tf-aws_vpc.id
+
+  tags = {
+    "Name" = "tf-aws_igw"
+  }
+}
+
+resource "aws_route_table" "tf-aws_public_rt" {
+  vpc_id = aws_vpc.tf-aws_vpc.id
+
+  tags = {
+    "Name" = "tf-aws_public"
+  }
+}
+
+resource "aws_route" "default_route" {
+  route_table_id         = aws_route_table.tf-aws_public_rt.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.tf-aws_internet_gateway.id
+}
+
+resource "aws_default_route_table" "tf-aws_private_rt" {
+  default_route_table_id = aws_vpc.tf-aws_vpc.default_route_table_id
+
+  tags = {
+    "Name" = "tf-aws_private"
+  }
+}
