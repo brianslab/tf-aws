@@ -1,6 +1,6 @@
 # networking/outputs.tf
 
-output "aws_vpc" {
+output "vpc_id" {
   value = aws_vpc.tf-aws_vpc.id
 }
 
