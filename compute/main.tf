@@ -45,17 +45,22 @@ resource "aws_instance" "tf-aws_node" {
       type        = "ssh"
       user        = "ubuntu"
       host        = self.public_ip
-      private_key = file("/home/brian/.ssh/key_tf-aws")
+      private_key = file(var.private_key_path)
     }
     script = "${path.cwd}/delay.sh"
   }
   provisioner "local-exec" {
     command = templatefile("${path.cwd}/scp_script.tpl",
       {
-        nodeip   = self.public_ip
-        k3s_path = "${path.cwd}"
-        nodename = self.tags.Name
+        private_key_path = var.private_key_path
+        nodeip           = self.public_ip
+        k3s_path         = "${path.cwd}"
+        nodename         = self.tags.Name
     })
+  }
+  provisioner "local-exec" {
+    when    = destroy
+    command = "rm -f ${path.cwd}/k3s-${self.tags.Name}.yaml"
   }
   tags = {
     Name = "tf-aws-node-${random_id.tf-aws_node_id[count.index].dec}"
