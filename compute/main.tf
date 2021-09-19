@@ -45,3 +45,9 @@ resource "aws_instance" "tf-aws_node" {
   }
 }
 
+resource "aws_lb_target_group_attachment" "tf-aws_tg_attach" {
+  count            = var.instance_count
+  target_group_arn = var.lb_target_group_arn
+  target_id        = aws_instance.tf-aws_node[count.index].id
+  port             = 8000
+}

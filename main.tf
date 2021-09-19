@@ -31,7 +31,7 @@ module "loadbalancer" {
   source                 = "./loadbalancer"
   public_sg              = module.networking.public_sg
   public_subnets         = module.networking.public_subnets
-  tg_port                = 80
+  tg_port                = 8000
   tg_protocol            = "HTTP"
   vpc_id                 = module.networking.vpc_id
   lb_healthy_threshold   = 2
@@ -43,17 +43,18 @@ module "loadbalancer" {
 }
 
 module "compute" {
-  source          = "./compute"
-  public_sg       = module.networking.public_sg
-  public_subnets  = module.networking.public_subnets
-  instance_count  = 2
-  instance_type   = "t3.micro"
-  key_name        = "tf-aws_key"
-  public_key_path = "/home/brian/.ssh/key_tf-aws.pub"
-  user_data_path  = "${path.root}/userdata.tpl"
-  vol_size        = 10
-  dbname          = var.dbname
-  dbuser          = var.dbuser
-  dbpassword      = var.dbpassword
-  db_endpoint     = module.database.db_endpoint
+  source              = "./compute"
+  public_sg           = module.networking.public_sg
+  public_subnets      = module.networking.public_subnets
+  instance_count      = 2
+  instance_type       = "t3.micro"
+  key_name            = "tf-aws_key"
+  public_key_path     = "/home/brian/.ssh/key_tf-aws.pub"
+  user_data_path      = "${path.root}/userdata.tpl"
+  vol_size            = 10
+  dbname              = var.dbname
+  dbuser              = var.dbuser
+  dbpassword          = var.dbpassword
+  db_endpoint         = module.database.db_endpoint
+  lb_target_group_arn = module.loadbalancer.lb_target_group_arn
 }
