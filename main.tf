@@ -13,19 +13,19 @@ module "networking" {
   db_subnet_group  = true
 }
 
-# module "database" {
-#   source                 = "./database"
-#   db_storage             = 10
-#   db_engine_version      = "5.7.22"
-#   db_instance_class      = "db.t2.micro"
-#   dbname                 = var.dbname
-#   dbuser                 = var.dbuser
-#   dbpassword             = var.dbpassword
-#   db_identifier          = "tf-aws-db"
-#   skip_db_snapshot       = true
-#   db_subnet_group_name   = module.networking.db_subnet_group_name[0]
-#   vpc_security_group_ids = module.networking.db_security_group
-# }
+module "database" {
+  source                 = "./database"
+  db_storage             = 10
+  db_engine_version      = "5.7.22"
+  db_instance_class      = "db.t2.micro"
+  dbname                 = var.dbname
+  dbuser                 = var.dbuser
+  dbpassword             = var.dbpassword
+  db_identifier          = "tf-aws-db"
+  skip_db_snapshot       = true
+  db_subnet_group_name   = module.networking.db_subnet_group_name[0]
+  vpc_security_group_ids = module.networking.db_security_group
+}
 
 module "loadbalancer" {
   source                 = "./loadbalancer"
@@ -50,6 +50,10 @@ module "compute" {
   instance_type   = "t3.micro"
   key_name        = "tf-aws_key"
   public_key_path = "/home/brian/.ssh/key_tf-aws.pub"
-  # user_data = ""
-  vol_size = 10
+  user_data_path  = "${path.root}/userdata.tpl"
+  vol_size        = 10
+  dbname          = var.dbname
+  dbuser          = var.dbuser
+  dbpassword      = var.dbpassword
+  db_endpoint     = module.database.db_endpoint
 }

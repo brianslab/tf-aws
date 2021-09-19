@@ -13,6 +13,6 @@ resource "aws_db_instance" "tf-aws_db" {
   identifier             = var.db_identifier
   skip_final_snapshot    = var.skip_db_snapshot
   tags = {
-    "Name" = "tf-aws_db"
+    Name = "tf-aws-db"
   }
 }

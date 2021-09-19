@@ -29,12 +29,19 @@ resource "aws_instance" "tf-aws_node" {
   instance_type          = var.instance_type
   ami                    = data.aws_ami.server_ami.id
   key_name               = aws_key_pair.tf-aws_auth.id
-  #   user_data = ""
+  user_data = templatefile(var.user_data_path,
+    {
+      nodename    = "tf-aws-node-${random_id.tf-aws_node_id[count.index].dec}"
+      db_endpoint = var.db_endpoint
+      dbname      = var.dbname
+      dbuser      = var.dbuser
+      dbpass      = var.dbpassword
+  })
   root_block_device {
     volume_size = var.vol_size
   }
   tags = {
-    "Name" = "tf-aws_node-${random_id.tf-aws_node_id[count.index].dec}"
+    Name = "tf-aws-node-${random_id.tf-aws_node_id[count.index].dec}"
   }
 }
 

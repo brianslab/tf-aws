@@ -31,7 +31,7 @@ resource "aws_subnet" "tf-aws_public_subnet" {
   map_public_ip_on_launch = true
   availability_zone       = random_shuffle.az_list.result[count.index]
   tags = {
-    "Name" = "tf-aws_public_${count.index + 1}"
+    Name = "tf-aws_public_${count.index + 1}"
   }
 }
 
@@ -42,7 +42,7 @@ resource "aws_subnet" "tf-aws_private_subnet" {
   map_public_ip_on_launch = false
   availability_zone       = random_shuffle.az_list.result[count.index]
   tags = {
-    "Name" = "tf-aws_private_${count.index + 1}"
+    Name = "tf-aws_private_${count.index + 1}"
   }
 }
 
@@ -55,14 +55,14 @@ resource "aws_route_table_association" "tf-aws_public_assoc" {
 resource "aws_internet_gateway" "tf-aws_internet_gateway" {
   vpc_id = aws_vpc.tf-aws_vpc.id
   tags = {
-    "Name" = "tf-aws_igw"
+    Name = "tf-aws_igw"
   }
 }
 
 resource "aws_route_table" "tf-aws_public_rt" {
   vpc_id = aws_vpc.tf-aws_vpc.id
   tags = {
-    "Name" = "tf-aws_public"
+    Name = "tf-aws_public"
   }
 }
 
@@ -75,7 +75,7 @@ resource "aws_route" "default_route" {
 resource "aws_default_route_table" "tf-aws_private_rt" {
   default_route_table_id = aws_vpc.tf-aws_vpc.default_route_table_id
   tags = {
-    "Name" = "tf-aws_private"
+    Name = "tf-aws_private"
   }
 }
 
@@ -111,6 +111,6 @@ resource "aws_db_subnet_group" "tf-aws_subnetgroup" {
   name       = "tf-aws_subnetgroup"
   subnet_ids = aws_subnet.tf-aws_private_subnet.*.id
   tags = {
-    "Name" = "tf-aws_rds_sng"
+    Name = "tf-aws_rds_sng"
   }
 }
