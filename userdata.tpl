@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# taken from mtc docs
 sudo hostnamectl set-hostname ${nodename} &&
 curl -sfL https://get.k3s.io | sh -s - \
 --datastore-endpoint="mysql://${dbuser}:${dbpass}@tcp(${db_endpoint})/${dbname}" \
