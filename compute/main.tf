@@ -40,6 +40,23 @@ resource "aws_instance" "tf-aws_node" {
   root_block_device {
     volume_size = var.vol_size
   }
+  provisioner "remote-exec" {
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      host        = self.public_ip
+      private_key = file("/home/brian/.ssh/key_tf-aws")
+    }
+    script = "${path.cwd}/delay.sh"
+  }
+  provisioner "local-exec" {
+    command = templatefile("${path.cwd}/scp_script.tpl",
+      {
+        nodeip   = self.public_ip
+        k3s_path = "${path.cwd}"
+        nodename = self.tags.Name
+    })
+  }
   tags = {
     Name = "tf-aws-node-${random_id.tf-aws_node_id[count.index].dec}"
   }
