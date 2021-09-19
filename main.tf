@@ -43,12 +43,13 @@ module "loadbalancer" {
 }
 
 module "compute" {
-  source         = "./compute"
-  public_sg      = module.networking.public_sg
-  public_subnets = module.networking.public_subnets
-  instance_count = 1
-  instance_type  = "t3.micro"
-  # key_name = ""
+  source          = "./compute"
+  public_sg       = module.networking.public_sg
+  public_subnets  = module.networking.public_subnets
+  instance_count  = 1
+  instance_type   = "t3.micro"
+  key_name        = "tf-aws_key"
+  public_key_path = "/home/brian/.ssh/key_tf-aws.pub"
   # user_data = ""
   vol_size = 10
 }

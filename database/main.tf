@@ -12,7 +12,6 @@ resource "aws_db_instance" "tf-aws_db" {
   vpc_security_group_ids = var.vpc_security_group_ids
   identifier             = var.db_identifier
   skip_final_snapshot    = var.skip_db_snapshot
-
   tags = {
     "Name" = "tf-aws_db"
   }
